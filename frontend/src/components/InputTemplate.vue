@@ -18,10 +18,12 @@
         </v-text-field>
       </div>
       <div class="category-field">
-        <p>カテゴリー</p>
+        <ul v-for="category in paymentTypeData.categories" :key="category">
+          <li>{{ category }}</li>
+        </ul>
       </div>
     </div>
-    <v-btn variant="outlined"> {{ paymentTypeData }}を登録 </v-btn>
+    <v-btn variant="outlined"> {{ paymentTypeData.type }}を登録 </v-btn>
   </div>
 </template>
 
@@ -33,15 +35,37 @@ export default {
       required: true,
     },
   },
+  data: function () {
+    return {
+      spendingCategories: [
+        '食費',
+        '日用品',
+        'ファッション',
+        '交際費',
+        'Vape',
+        '光熱費',
+        '住居費',
+        '仕事道具',
+        '交通費',
+      ],
+      incomeCategories: ['給料', '臨時収入'],
+    }
+  },
   computed: {
     paymentTypeData() {
-      return this.paymentType === 'spending' ? '支出' : '収入'
+      return this.paymentType === 'spending'
+        ? { type: '支出', categories: this.spendingCategories }
+        : { type: '収入', categories: this.incomeCategories }
     },
   },
 }
 </script>
 
 <style>
+ul {
+  list-style: none;
+}
+
 .input-template {
   margin-top: 50px;
 }
