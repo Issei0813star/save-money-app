@@ -2,7 +2,7 @@
   <div>
     <nav>
       <router-link to="/">レポート</router-link> ｜
-      <router-link to="wright">入力</router-link>
+      <router-link to="input">入力</router-link>
     </nav>
     <router-view />
   </div>

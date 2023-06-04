@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import PaymentsReport from '../views/PaymentsReport.vue'
-import WrightPayments from '../views/WrightPayments.vue'
+import InputPayments from '../views/InputPayments.vue'
 
 const routes = [
   {
@@ -9,8 +9,8 @@ const routes = [
     component: PaymentsReport,
   },
   {
-    path: '/wright',
-    component: WrightPayments,
+    path: '/input',
+    component: InputPayments,
   },
 ]
 

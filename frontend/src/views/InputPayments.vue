@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: 'WrightPayments',
+  name: 'InputPayments',
 }
 </script>
