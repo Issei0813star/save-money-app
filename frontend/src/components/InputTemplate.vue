@@ -9,6 +9,7 @@
           clearable
           type="date"
           v-model="inputedData.date"
+          :rules="dateRule"
         >
         </v-text-field>
         <v-text-field
@@ -18,6 +19,7 @@
           clearable
           type="number"
           v-model="inputedData.amount"
+          :rules="amountRule"
         >
         </v-text-field>
       </div>
@@ -26,6 +28,7 @@
           :items="paymentTypeData.categories"
           label="カテゴリー"
           v-model="inputedData.category"
+          :rules="categoryRule"
         ></v-select>
       </div>
     </div>
@@ -63,6 +66,23 @@ export default {
         date: undefined,
         category: undefined,
       },
+      amountRule: [
+        (value) =>
+          (value && value.length !== 0 && value === this.inputedData.amount) ||
+          '入力必須',
+      ],
+      dateRule: [
+        (value) =>
+          (value && value.length !== 0 && value === this.inputedData.date) ||
+          '入力必須',
+      ],
+      categoryRule: [
+        (value) =>
+          (value &&
+            value.length !== 0 &&
+            value === this.inputedData.category) ||
+          '入力必須',
+      ],
     }
   },
   computed: {
