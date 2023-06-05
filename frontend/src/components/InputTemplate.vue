@@ -7,6 +7,7 @@
           placeholder="日付を入力"
           color="blue"
           clearable
+          type="date"
         >
         </v-text-field>
         <v-text-field
@@ -14,12 +15,14 @@
           placeholder="金額を入力"
           color="blue"
           clearable
+          type="number"
         >
         </v-text-field>
       </div>
       <div class="category-field">
+        <p>カテゴリー：{{ selectedCategory }}</p>
         <ul v-for="category in paymentTypeData.categories" :key="category">
-          <li>{{ category }}</li>
+          <li @click="selectedCategory = category">{{ category }}</li>
         </ul>
       </div>
     </div>
@@ -49,6 +52,7 @@ export default {
         '交通費',
       ],
       incomeCategories: ['給料', '臨時収入'],
+      selectedCategory: '未選択',
     }
   },
   computed: {
@@ -64,6 +68,11 @@ export default {
 <style>
 ul {
   list-style: none;
+}
+
+li:hover {
+  color: rgb(35, 127, 232);
+  cursor: pointer;
 }
 
 .input-template {
