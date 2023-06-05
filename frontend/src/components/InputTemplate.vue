@@ -8,6 +8,7 @@
           color="blue"
           clearable
           type="date"
+          v-model="inputedData.date"
         >
         </v-text-field>
         <v-text-field
@@ -16,17 +17,21 @@
           color="blue"
           clearable
           type="number"
+          v-model="inputedData.amount"
         >
         </v-text-field>
       </div>
       <div class="category-field">
-        <p>カテゴリー：{{ selectedCategory }}</p>
-        <ul v-for="category in paymentTypeData.categories" :key="category">
-          <li @click="selectedCategory = category">{{ category }}</li>
-        </ul>
+        <v-select
+          :items="paymentTypeData.categories"
+          label="カテゴリー"
+          v-model="inputedData.category"
+        ></v-select>
       </div>
     </div>
-    <v-btn variant="outlined"> {{ paymentTypeData.type }}を登録 </v-btn>
+    <v-btn variant="outlined" :disabled="!validateInuptedData">
+      {{ paymentTypeData.type }}を登録
+    </v-btn>
   </div>
 </template>
 
@@ -53,6 +58,11 @@ export default {
       ],
       incomeCategories: ['給料', '臨時収入'],
       selectedCategory: '未選択',
+      inputedData: {
+        amount: undefined,
+        date: undefined,
+        category: undefined,
+      },
     }
   },
   computed: {
@@ -60,6 +70,9 @@ export default {
       return this.paymentType === 'spending'
         ? { type: '支出', categories: this.spendingCategories }
         : { type: '収入', categories: this.incomeCategories }
+    },
+    validateInuptedData: function () {
+      return !Object.values(this.inputedData).includes(undefined)
     },
   },
 }
@@ -87,9 +100,11 @@ li:hover {
 
 .text-field {
   width: 300px;
+  padding-right: 20px;
 }
 
 .category-field {
   width: 300px;
+  padding-left: 20px;
 }
 </style>
