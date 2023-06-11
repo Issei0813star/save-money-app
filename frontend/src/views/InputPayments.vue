@@ -1,10 +1,13 @@
 <template>
   <div>
     <nav>
-      <v-btn @click="paymentType = 'spending'">支出</v-btn>
-      <v-btn @click="paymentType = 'income'">収入</v-btn>
+      <v-btn @click="switchPaymentType('spending')">支出</v-btn>
+      <v-btn @click="switchPaymentType('income')">収入</v-btn>
     </nav>
-    <input-template :payment-type="paymentType"></input-template>
+    <input-template
+      :payment-type="paymentType"
+      ref="inputTemplate"
+    ></input-template>
   </div>
 </template>
 
@@ -19,6 +22,12 @@ export default {
     return {
       paymentType: 'spending',
     }
+  },
+  methods: {
+    switchPaymentType(type) {
+      this.paymentType = type
+      this.$refs.inputTemplate.inputedData.category = undefined
+    },
   },
 }
 </script>
