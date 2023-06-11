@@ -92,7 +92,7 @@ export default {
         : { type: '収入', categories: this.incomeCategories }
     },
     validateInuptedData: function () {
-      return !Object.values(this.inputedData).includes(undefined)
+      return Object.values(this.inputedData).every((value) => value)
     },
   },
 }
