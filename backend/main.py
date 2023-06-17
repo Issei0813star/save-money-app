@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, jsonify
 from flask_restful import Api, Resource, reqparse
 import sqlite3
 
@@ -8,17 +8,16 @@ app = Flask(
     template_folder="../frontend/dist",
 )
 api = Api(app)
-# リクエストパーサーを作成
-parser = reqparse.RequestParser()
-parser.add_argument("amount", type=int, required=True)
-parser.add_argument("type", type=str, required=True)
-parser.add_argument("category", type=str, required=True)
-parser.add_argument("isCredit", type=int, required=True)
-parser.add_argument("date", type=str, required=True)
 
 
 class Payment(Resource):
     def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("amount", type=int, required=True)
+        parser.add_argument("type", type=str, required=True)
+        parser.add_argument("category", type=str, required=True)
+        parser.add_argument("isCredit", type=int, required=True)
+        parser.add_argument("date", type=str, required=True)
         args = parser.parse_args()
 
         conn = sqlite3.connect("../save-money-app.db")
@@ -41,7 +40,30 @@ class Payment(Resource):
         return {"message": "データが正常に保存されました。"}, 200
 
 
+class PaymentsMonth(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("targetMonth", type=str, required=True)
+        args = parser.parse_args()
+
+        conn = sqlite3.connect("../save-money-app.db")
+        cursor = conn.cursor()
+
+        target_month = args["targetMonth"]
+
+        cursor.execute(
+            "SELECT * FROM payment WHERE strftime('%Y-%m', date) = ?", (target_month,)
+        )
+        data = cursor.fetchall()
+
+        conn.close()
+
+        response = {"data": data}
+        return response
+
+
 api.add_resource(Payment, "/api/payment")
+api.add_resource(PaymentsMonth, "/api/payments/month")
 
 
 @app.route("/", defaults={"path": ""})
