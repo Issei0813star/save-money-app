@@ -35,7 +35,11 @@
         <label>クレジット払い</label>
       </div>
     </div>
-    <v-btn variant="outlined" :disabled="!validateInuptedData">
+    <v-btn
+      variant="outlined"
+      :disabled="!validateInuptedData"
+      @click="registerPayment()"
+    >
       {{ paymentTypeData.type }}を登録
     </v-btn>
   </div>
@@ -97,6 +101,16 @@ export default {
     },
     validateInuptedData: function () {
       return Object.values(this.inputedData).every((value) => value)
+    },
+  },
+  methods: {
+    registerPayment() {
+      const paymentData = { ...this.inputedData, isCredit: this.isCredit }
+      this.inputedData.amount = undefined
+      this.inputedData.category = undefined
+      this.inputedData.date = undefined
+      this.isCredit = false
+      this.$emit('register', paymentData)
     },
   },
 }
