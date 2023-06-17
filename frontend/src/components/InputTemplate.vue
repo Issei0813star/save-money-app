@@ -1,7 +1,7 @@
 <template>
   <div class="input-template">
     <div class="input-field">
-      <div class="text-field">
+      <div class="left-field">
         <v-text-field
           label="日付"
           placeholder="日付を入力"
@@ -23,13 +23,16 @@
         >
         </v-text-field>
       </div>
-      <div class="category-field">
+      <div class="right-field">
         <v-select
           :items="paymentTypeData.categories"
           label="カテゴリー"
           v-model="inputedData.category"
           :rules="categoryRule"
         ></v-select>
+
+        <input type="checkbox" v-model="isCredit" />
+        <label>クレジット払い</label>
       </div>
     </div>
     <v-btn variant="outlined" :disabled="!validateInuptedData">
@@ -83,6 +86,7 @@ export default {
             value === this.inputedData.category) ||
           '入力必須',
       ],
+      isCredit: false,
     }
   },
   computed: {
@@ -118,12 +122,12 @@ li:hover {
   margin-bottom: 30px;
 }
 
-.text-field {
+.left-field {
   width: 300px;
   padding-right: 20px;
 }
 
-.category-field {
+.right-field {
   width: 300px;
   padding-left: 20px;
 }
