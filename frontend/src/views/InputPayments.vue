@@ -15,6 +15,7 @@
 <script>
 import InputTemplate from '../components/InputTemplate.vue'
 import ApiService from '@/apiService.js'
+import { showToaster } from '@/showToaster.js'
 
 export default {
   name: 'InputPayments',
@@ -34,7 +35,12 @@ export default {
     async register(paymentData) {
       const sendData = { ...paymentData, type: this.paymentType }
       const api = new ApiService()
-      await api.postPaymentData(sendData)
+      const result = await api.postPaymentData(sendData)
+      if (result) {
+        showToaster('登録成功')
+      } else {
+        showToaster('登録失敗', 'danger')
+      }
     },
   },
 }
