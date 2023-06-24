@@ -1,7 +1,9 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 import sqlite3
+import json
+import codecs
 
 app = Flask(
     __name__,
@@ -44,14 +46,10 @@ class Payment(Resource):
 
 class PaymentsMonth(Resource):
     def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("targetMonth", type=str, required=True)
-        args = parser.parse_args()
+        target_month = request.args.get("targetMonth")
 
         conn = sqlite3.connect("../save-money-app.db")
         cursor = conn.cursor()
-
-        target_month = args["targetMonth"]
 
         cursor.execute(
             "SELECT * FROM payment WHERE strftime('%Y-%m', date) = ?", (target_month,)
@@ -60,7 +58,24 @@ class PaymentsMonth(Resource):
 
         conn.close()
 
-        response = {"data": data}
+        response_data = []
+
+        for row in data:
+            response_row = {
+                "amount": row[0],
+                "type": row[1],
+                "category": row[2],
+                "isCredit": row[3],
+                "date": row[4],
+            }
+            response_data.append(response_row)
+
+        response = {"data": response_data}
+        response = app.response_class(
+            response=json.dumps(response, ensure_ascii=False),
+            status=200,
+            mimetype="application/json",
+        )
         return response
 
 
