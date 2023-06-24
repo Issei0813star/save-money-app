@@ -10,8 +10,7 @@
           type="date"
           v-model="inputedData.date"
           :rules="dateRule"
-        >
-        </v-text-field>
+        ></v-text-field>
         <v-text-field
           label="金額"
           placeholder="金額を入力"
@@ -20,8 +19,7 @@
           type="number"
           v-model="inputedData.amount"
           :rules="amountRule"
-        >
-        </v-text-field>
+        ></v-text-field>
       </div>
       <div class="right-field">
         <v-select
@@ -37,8 +35,8 @@
     </div>
     <v-btn
       variant="outlined"
-      :disabled="!validateInuptedData"
-      @click="registerPayment()"
+      :disabled="!validateInputedData"
+      @click="registerPayment"
     >
       {{ paymentTypeData.type }}を登録
     </v-btn>
@@ -46,6 +44,8 @@
 </template>
 
 <script>
+import { ref, reactive, computed } from 'vue'
+
 export default {
   props: {
     paymentType: {
@@ -53,65 +53,73 @@ export default {
       required: true,
     },
   },
-  data: function () {
-    return {
-      spendingCategories: [
-        '食費',
-        '日用品',
-        'ファッション',
-        '交際費',
-        'Vape',
-        '光熱費',
-        '住居費',
-        '仕事道具',
-        '交通費',
-      ],
-      incomeCategories: ['給料', '臨時収入'],
-      selectedCategory: '未選択',
-      inputedData: {
-        amount: undefined,
-        date: undefined,
-        category: undefined,
-      },
-      amountRule: [
-        (value) =>
-          (value && value.length !== 0 && value === this.inputedData.amount) ||
-          '入力必須',
-      ],
-      dateRule: [
-        (value) =>
-          (value && value.length !== 0 && value === this.inputedData.date) ||
-          '入力必須',
-      ],
-      categoryRule: [
-        (value) =>
-          (value &&
-            value.length !== 0 &&
-            value === this.inputedData.category) ||
-          '入力必須',
-      ],
-      isCredit: false,
+  setup(props, { emit }) {
+    const spendingCategories = [
+      '食費',
+      '日用品',
+      'ファッション',
+      '交際費',
+      'Vape',
+      '光熱費',
+      '住居費',
+      '仕事道具',
+      '交通費',
+    ]
+    const incomeCategories = ['給料', '臨時収入']
+
+    const inputedData = reactive({
+      amount: undefined,
+      date: undefined,
+      category: undefined,
+    })
+
+    const amountRule = [
+      (value) =>
+        (value && value.length !== 0 && value === inputedData.amount) ||
+        '入力必須',
+    ]
+    const dateRule = [
+      (value) =>
+        (value && value.length !== 0 && value === inputedData.date) ||
+        '入力必須',
+    ]
+    const categoryRule = [
+      (value) =>
+        (value && value.length !== 0 && value === inputedData.category) ||
+        '入力必須',
+    ]
+
+    const isCredit = ref(false)
+
+    const paymentTypeData = computed(() => {
+      return props.paymentType === 'spending'
+        ? { type: '支出', categories: spendingCategories }
+        : { type: '収入', categories: incomeCategories }
+    })
+
+    const validateInputedData = computed(() => {
+      return Object.values(inputedData).every((value) => value)
+    })
+
+    const registerPayment = () => {
+      const paymentData = { ...inputedData, isCredit: isCredit.value }
+      inputedData.amount = undefined
+      inputedData.category = undefined
+      inputedData.date = undefined
+      isCredit.value = false
+      emit('register', paymentData)
     }
-  },
-  computed: {
-    paymentTypeData() {
-      return this.paymentType === 'spending'
-        ? { type: '支出', categories: this.spendingCategories }
-        : { type: '収入', categories: this.incomeCategories }
-    },
-    validateInuptedData: function () {
-      return Object.values(this.inputedData).every((value) => value)
-    },
-  },
-  methods: {
-    registerPayment() {
-      const paymentData = { ...this.inputedData, isCredit: this.isCredit }
-      this.inputedData.amount = undefined
-      this.inputedData.category = undefined
-      this.inputedData.date = undefined
-      this.isCredit = false
-      this.$emit('register', paymentData)
-    },
+
+    return {
+      inputedData,
+      amountRule,
+      dateRule,
+      categoryRule,
+      isCredit,
+      paymentTypeData,
+      validateInputedData,
+      registerPayment,
+    }
   },
 }
 </script>

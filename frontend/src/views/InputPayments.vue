@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue'
 import InputTemplate from '../components/InputTemplate.vue'
 import ApiService from '@/apiService.js'
 import { showToaster } from '@/showToaster.js'
@@ -22,18 +23,25 @@ export default {
   components: {
     InputTemplate,
   },
-  data: function () {
-    return {
-      paymentType: 'spending',
+  setup() {
+    //data
+    const paymentType = ref('spending')
+
+    //methods
+    const switchPaymentType = (type) => {
+      paymentType.value = type
+      clearInputData()
     }
-  },
-  methods: {
-    switchPaymentType(type) {
-      this.paymentType = type
-      this.$refs.inputTemplate.inputedData.category = undefined
-    },
-    async register(paymentData) {
-      const sendData = { ...paymentData, type: this.paymentType }
+
+    const clearInputData = () => {
+      const inputTemplateRef = ref(null)
+      if (inputTemplateRef.value) {
+        inputTemplateRef.value.clearInputData()
+      }
+    }
+
+    const register = async (paymentData) => {
+      const sendData = { ...paymentData, type: paymentType.value }
       const api = new ApiService()
       const result = await api.postPaymentData(sendData)
       if (result) {
@@ -41,7 +49,17 @@ export default {
       } else {
         showToaster('登録失敗', 'danger')
       }
-    },
+    }
+
+    onMounted(() => {
+      clearInputData()
+    })
+
+    return {
+      paymentType,
+      switchPaymentType,
+      register,
+    }
   },
 }
 </script>
