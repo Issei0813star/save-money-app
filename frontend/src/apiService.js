@@ -7,11 +7,11 @@ class ApiService {
     })
   }
 
-  async getMonthPayments(targetDate) {
+  async getMonthPayments(targetMonth) {
     try {
       await this.api.get('/payments/month', {
         params: {
-          targetDate,
+          targetMonth,
         },
       })
     } catch (error) {
