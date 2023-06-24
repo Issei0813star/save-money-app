@@ -1,6 +1,7 @@
 <template>
   <div class="report">
     <h1>収支レポート</h1>
+    {{ paymentData }}
   </div>
 </template>
 
@@ -12,14 +13,17 @@ export default {
   name: 'PaymentsReport',
 
   setup() {
+    //data
     const paymentData = ref([])
 
+    //lifecycle
     onBeforeMount(async () => {
       const api = new ApiService()
       const targetMonth = getCurrentMonth()
       paymentData.value = await api.getMonthPayments(targetMonth)
     })
 
+    //methods
     function getCurrentMonth() {
       const currentDate = new Date()
       const year = currentDate.getFullYear()

@@ -9,11 +9,12 @@ class ApiService {
 
   async getMonthPayments(targetMonth) {
     try {
-      await this.api.get('/payments/month', {
+      const res = await this.api.get('/payments/month', {
         params: {
           targetMonth,
         },
       })
+      return res.data
     } catch (error) {
       console.error(error)
     }

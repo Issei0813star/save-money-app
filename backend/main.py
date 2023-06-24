@@ -70,12 +70,39 @@ class PaymentsMonth(Resource):
             }
             response_data.append(response_row)
 
-        response = {"data": response_data}
-        response = app.response_class(
-            response=json.dumps(response, ensure_ascii=False),
-            status=200,
-            mimetype="application/json",
-        )
+        def get_over_all(target, value):
+            total = sum(
+                item["amount"] for item in response_data if item[target] == value
+            )
+            return total
+
+        total_spending = get_over_all("type", "spending")
+        total_income = get_over_all("type", "income")
+        food_costs = get_over_all("category", "食費")
+        daily_necessities_costs = get_over_all("category", "日用品")
+        fashion_costs = get_over_all("category", "ファッション")
+        entertainment_costs = get_over_all("category", "交際費")
+        vape_costs = get_over_all("category", "Vape")
+        utility_costs = get_over_all("category", "光熱費")
+        housing_costs = get_over_all("category", "住居費")
+        work_tools_costs = get_over_all("category", "食費")
+        transportation_costs = get_over_all("category", "食費")
+
+        response = {
+            "total_payments": total_spending,
+            "total_income": total_income,
+            "category_defs_costs": {
+                "food": food_costs,
+                "daily_necessities": daily_necessities_costs,
+                "fashion": fashion_costs,
+                "entertainment": entertainment_costs,
+                "vape": vape_costs,
+                "utility": utility_costs,
+                "housing": housing_costs,
+                "work_tools": work_tools_costs,
+                "transportation": transportation_costs,
+            },
+        }
         return response
 
 
